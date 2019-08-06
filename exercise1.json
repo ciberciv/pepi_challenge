@@ -1,0 +1,103 @@
+{
+    "cities": [
+      {
+        "name": "Madrid",
+        "base": true,
+        "reward": 0
+      },
+      {
+        "name": "London",
+        "reward": 47
+      },
+      {
+        "name": "Paris",
+        "reward": 52
+      },
+      {
+        "name": "Rome",
+        "reward": 35
+      },
+      {
+        "name": "Berlin",
+        "reward": 18
+      },
+      {
+        "name": "Warsaw",
+        "reward": 22
+      },
+      {
+        "name": "Bucharest",
+        "reward": 11
+      },
+      {
+        "name": "Kyiv",
+        "reward": 9
+      },
+      {
+        "name": "Moscow",
+        "reward": 50
+      }
+    ],
+    "connections": [
+      {
+        "from": "Madrid",
+        "to": "London",
+        "cost": 12
+      },
+      {
+        "from": "Madrid",
+        "to": "Paris",
+        "cost": 12
+      },
+      {
+        "from": "Madrid",
+        "to": "Rome",
+        "cost": 15
+      },
+      {
+        "from": "Paris",
+        "to": "London",
+        "cost": 6
+      },
+      {
+        "from": "Paris",
+        "to": "Berlin",
+        "cost": 15
+      },
+      {
+        "from": "Berlin",
+        "to": "Rome",
+        "cost": 7
+      },
+      {
+        "from": "Berlin",
+        "to": "Warsaw",
+        "cost": 12
+      },
+      {
+        "from": "Rome",
+        "to": "Bucharest",
+        "cost": 15
+      },
+      {
+        "from": "Warsaw",
+        "to": "Kyiv",
+        "cost": 5
+      },
+      {
+        "from": "Bucharest",
+        "to": "Kyiv",
+        "cost": 5
+      },
+      {
+        "from": "London",
+        "to": "Moscow",
+        "cost": 39
+      },
+      {
+        "from": "Kyiv",
+        "to": "Moscow",
+        "cost": 12
+      }
+    ]
+}
