@@ -1,4 +1,6 @@
 from collections import defaultdict
+import functools
+import operator
 
 
 class citiesGraph:
@@ -23,3 +25,25 @@ class citiesGraph:
 
         self.edges[vertex1].append({vertex2: cost})
         self.edges[vertex2].append({vertex1: cost})
+
+    def getPossiblePaths(self, startingCity, path, daysLeft):
+        currentCity = startingCity
+        shorterPath = []
+
+        if path:
+            currentCity = path[-1]
+
+            if path[-1] == startingCity:
+                shorterPath = path
+
+        if daysLeft:
+            possiblePaths = [self.getPossiblePaths(startingCity, path + [nextCity], daysLeft - 1)
+                            for item in self.edges[currentCity]
+                            for nextCity, _ in item.items()]
+
+            if shorterPath:
+                possiblePaths.append([shorterPath])
+
+            return functools.reduce(operator.iconcat, possiblePaths, [])
+        else:
+            return [path]
