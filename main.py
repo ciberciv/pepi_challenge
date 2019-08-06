@@ -9,6 +9,4 @@ connections = data["connections"]
 
 pepi = citiesGraph(cities, connections)
 
-thing = list(filter(lambda x: x[-1] == pepi.startingCity, pepi.getPossiblePaths([], 5)))
-
-print(thing)
+print(pepi.getBestPath(5))

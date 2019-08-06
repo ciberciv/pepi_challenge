@@ -51,3 +51,26 @@ class citiesGraph:
             return functools.reduce(operator.iconcat, possiblePaths, [])
         else:
             return [path]
+
+    def calculatePathWeight(self, path):
+        visited = []
+        netReward = 0
+        currentCity = self.startingCity
+
+        for city in path:
+            reward = self.nodes[city].reward * (city not in visited)
+            cost = [edge.cost for edge in self.edges[currentCity] if edge.nextNode == city][0]
+            visited.append(city)
+            currentCity = city
+            netReward += reward - cost
+
+        return netReward
+
+    def getBestPath(self, days):
+        bestPath = sorted([(path, self.calculatePathWeight(path))
+                           for path in filter(lambda x: x[-1] == self.startingCity, self.getPossiblePaths([], days))],
+                          key=lambda x: x[1], reverse=True)[0]
+
+        bestPath[0].insert(0, self.startingCity)
+
+        return bestPath

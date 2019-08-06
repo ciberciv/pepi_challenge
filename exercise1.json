@@ -71,6 +71,11 @@
       },
       {
         "from": "Berlin",
+        "to": "London",
+        "cost": 17
+      },
+      {
+        "from": "Berlin",
         "to": "Warsaw",
         "cost": 12
       },
@@ -83,6 +88,11 @@
         "from": "Warsaw",
         "to": "Kyiv",
         "cost": 5
+      },
+      {
+        "from": "Warsaw",
+        "to": "Moscow",
+        "cost": 15
       },
       {
         "from": "Bucharest",
