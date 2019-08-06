@@ -1,4 +1,5 @@
 from collections import defaultdict
+from graphUtils import Node, Edge
 import functools
 import operator
 
@@ -14,8 +15,12 @@ class citiesGraph:
         for connection in connections:
             self.addConnection(connection)
 
+        for city in self.nodes:
+            if self.nodes[city].isBase:
+                self.startingCity = city
+
     def addCity(self, cityObject):
-        city = {"reward": cityObject["reward"], "isBase": cityObject.get("base", False)}
+        city = Node(cityObject["reward"], cityObject.get("base", False))
         self.nodes[cityObject["name"]] = city
 
     def addConnection(self, connectionObject):
@@ -23,23 +28,22 @@ class citiesGraph:
         vertex2 = connectionObject["to"]
         cost = connectionObject["cost"]
 
-        self.edges[vertex1].append({vertex2: cost})
-        self.edges[vertex2].append({vertex1: cost})
+        self.edges[vertex1].append(Edge(vertex2, cost))
+        self.edges[vertex2].append(Edge(vertex1, cost))
 
-    def getPossiblePaths(self, startingCity, path, daysLeft):
-        currentCity = startingCity
+    def getPossiblePaths(self, path, daysLeft):
+        currentCity = self.startingCity
         shorterPath = []
 
         if path:
             currentCity = path[-1]
 
-            if path[-1] == startingCity:
+            if path[-1] == self.startingCity:
                 shorterPath = path
 
         if daysLeft:
-            possiblePaths = [self.getPossiblePaths(startingCity, path + [nextCity], daysLeft - 1)
-                            for item in self.edges[currentCity]
-                            for nextCity, _ in item.items()]
+            possiblePaths = [self.getPossiblePaths(path + [nextCity.nextNode], daysLeft - 1)
+                             for nextCity in self.edges[currentCity]]
 
             if shorterPath:
                 possiblePaths.append([shorterPath])
