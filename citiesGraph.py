@@ -5,9 +5,9 @@ import operator
 import queue
 
 
-class citiesGraph:
+class CitiesGraph:
     def __init__(self, cities, connections):
-        self.nodes = defaultdict(list)
+        self.nodes = defaultdict(Node)
         self.edges = defaultdict(list)
         self.daysToStartingCity = defaultdict(int)
 
@@ -47,14 +47,17 @@ class citiesGraph:
 
         if daysLeft:
             possiblePaths = [self.getPossiblePaths(path + [nextCity.nextNode], daysLeft - 1)
-                             for nextCity in self.edges[currentCity]]
+                             for nextCity in self.edges[currentCity]
+                             if self.daysToStartingCity[currentCity] <= daysLeft]
 
             if shorterPath:
                 possiblePaths.append([shorterPath])
 
             return functools.reduce(operator.iconcat, possiblePaths, [])
-        else:
+        elif path[-1] == self.startingCity:
             return [path]
+        else:
+            return []
 
     def calculatePathWeight(self, path):
         visited = []
@@ -72,7 +75,7 @@ class citiesGraph:
 
     def getBestPath(self, days):
         bestPath = sorted([(path, self.calculatePathWeight(path))
-                           for path in filter(lambda x: x[-1] == self.startingCity, self.getPossiblePaths([], days))],
+                           for path in self.getPossiblePaths([], days)],
                           key=lambda x: x[1], reverse=True)[0]
 
         bestPath[0].insert(0, self.startingCity)
