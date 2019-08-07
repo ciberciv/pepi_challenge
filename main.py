@@ -1,6 +1,7 @@
 import json
 from citiesGraph import citiesGraph
 
+
 with open("exercise1.json") as file:
     data = json.load(file)
 

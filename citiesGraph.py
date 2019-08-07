@@ -2,12 +2,14 @@ from collections import defaultdict
 from graphUtils import Node, Edge
 import functools
 import operator
+import queue
 
 
 class citiesGraph:
     def __init__(self, cities, connections):
         self.nodes = defaultdict(list)
         self.edges = defaultdict(list)
+        self.daysToStartingCity = defaultdict(int)
 
         for city in cities:
             self.addCity(city)
@@ -18,6 +20,8 @@ class citiesGraph:
         for city in self.nodes:
             if self.nodes[city].isBase:
                 self.startingCity = city
+
+        self.getDaysToCities()
 
     def addCity(self, cityObject):
         city = Node(cityObject["reward"], cityObject.get("base", False))
@@ -74,3 +78,28 @@ class citiesGraph:
         bestPath[0].insert(0, self.startingCity)
 
         return bestPath
+
+    def getDaysToCities(self):
+        visited = []
+        distances = defaultdict(int)
+
+        q = queue.Queue()
+        distances[self.startingCity] = 0
+
+        q.put(self.startingCity)
+        visited.append(self.startingCity)
+
+        while not q.empty():
+            currentCity = q.get()
+
+            for adjacentCity in self.edges[currentCity]:
+                nextCityName = adjacentCity.nextNode
+
+                if nextCityName in visited:
+                    continue
+
+                distances[nextCityName] = distances[currentCity] + 1
+                q.put(nextCityName)
+                visited.append(nextCityName)
+
+        self.daysToStartingCity = distances
