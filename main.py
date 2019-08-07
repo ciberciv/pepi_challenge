@@ -1,6 +1,6 @@
 import sys
 import json
-from TripGraph import TripGraph
+from classes.TripGraph import TripGraph
 
 
 # This takes care of arguments to run the script from the command line. Default is "map.json" and 7 days.

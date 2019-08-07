@@ -1,4 +1,4 @@
-from CitiesGraph import CitiesGraph
+from classes.CitiesGraph import CitiesGraph
 from collections import defaultdict
 import functools
 import operator

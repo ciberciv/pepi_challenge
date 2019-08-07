@@ -1,5 +1,5 @@
 from collections import defaultdict
-from graphUtils import Node, Edge
+from classes.graphUtils import Node, Edge
 
 
 # Graph model for this particular problem. Allows to add nodes and edges.
