@@ -47,6 +47,7 @@ class TripGraph(CitiesGraph):
         """
         In each recursive call, returns a list of lists with the possible paths developing over time. In the end,
         returns a list of lists of correct paths (that is, ends in startingCity and in less than the initial days.
+        It stops if it reaches a node from which it can't return to startingCity in the number of daysLeft.
         :param path: list<str>
         :param daysLeft: int
         :return: list<list<str>>
@@ -63,35 +64,35 @@ class TripGraph(CitiesGraph):
         if daysLeft:
             possiblePaths = [self.getPossiblePaths(path + [nextCity.nextNode], daysLeft - 1)
                              for nextCity in self.edges[currentCity]
-                             if self.daysToStartingCity[currentCity] <= daysLeft]
+                             if self.daysToStartingCity[currentCity] <= daysLeft]  # Handles return to startingCity
 
             if shorterPath:
-                possiblePaths.append([shorterPath])
+                possiblePaths.append([shorterPath])  # Adds paths shorter than maxDays
 
-            return functools.reduce(operator.iconcat, possiblePaths, [])
+            return functools.reduce(operator.iconcat, possiblePaths, [])  # Reduces list of lists caused by recursion
         elif path[-1] == self.startingCity:
             return [path]
         else:
             return []
 
-    def calculatePathReward(self, path):
+    def calculatePathProfit(self, path):
         """
         Given a path, gets the actual reward considering the reward and the cost of the trip
         :param path: list<str>
         :return: int
         """
         visited = []
-        netReward = 0
+        profit = 0
         currentCity = self.startingCity
 
         for city in path:
-            reward = self.nodes[city].reward * (city not in visited)
+            reward = self.nodes[city].reward * (city not in visited)  # Handles visited cities
             cost = [edge.cost for edge in self.edges[currentCity] if edge.nextNode == city][0]
             visited.append(city)
             currentCity = city
-            netReward += reward - cost
+            profit += reward - cost
 
-        return netReward
+        return profit
 
     def getBestPath(self):
         """
@@ -103,9 +104,9 @@ class TripGraph(CitiesGraph):
         # It will be sorted according to rewards in descending order (due to reverse=True). If two or more pairs have
         # the same cost, since we set the order to be descending, the longest path would take preference. However, if
         # we take the negative of their lengths instead, the shortest one would be the first.
-        sortedPaths = sorted([(path, self.calculatePathReward(path))
+        sortedPaths = sorted([(path, self.calculatePathProfit(path))
                               for path in self.getPossiblePaths([], self.maxDays)],
-                             key=lambda pathCostPair: (pathCostPair[1], -len(pathCostPair[0])), reverse=True)
+                             key=lambda pathProfitPair: (pathProfitPair[1], -len(pathProfitPair[0])), reverse=True)
 
         bestPath = sortedPaths[0]
 

@@ -1,5 +1,5 @@
-import json
 import sys
+import json
 from TripGraph import TripGraph
 
 
@@ -23,4 +23,7 @@ connections = data["connections"]
 
 pepi = TripGraph(cities, connections, maxDays)
 
-print(pepi.bestPath)
+(path, profit) = pepi.bestPath
+
+print("Cities (in order):", path)
+print("Profit:", profit)
