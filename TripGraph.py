@@ -98,9 +98,16 @@ class TripGraph(CitiesGraph):
         Selects the best path out of the possible paths
         :return: (list<str>, int)
         """
-        bestPath = sorted([(path, self.calculatePathReward(path))
-                           for path in self.getPossiblePaths([], self.maxDays)],
-                          key=lambda x: x[1], reverse=True)[0]
+
+        # This sorting works taking advantage of how tuple sort is implemented in Python.
+        # It will be sorted according to rewards in descending order (due to reverse=True). If two or more pairs have
+        # the same cost, since we set the order to be descending, the longest path would take preference. However, if
+        # we take the negative of their lengths instead, the shortest one would be the first.
+        sortedPaths = sorted([(path, self.calculatePathReward(path))
+                              for path in self.getPossiblePaths([], self.maxDays)],
+                             key=lambda pathCostPair: (pathCostPair[1], -len(pathCostPair[0])), reverse=True)
+
+        bestPath = sortedPaths[0]
 
         bestPath[0].insert(0, self.startingCity)
 
