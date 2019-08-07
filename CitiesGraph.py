@@ -15,16 +15,16 @@ class CitiesGraph:
             self.addConnection(connection)
 
     def addCity(self, cityObject):
-        '''
+        """
         :param cityObject: {'name': str, 'base': bool, 'reward': int}
-        '''
+        """
         city = Node(cityObject["reward"], cityObject.get("base", False))
         self.nodes[cityObject["name"]] = city
 
     def addConnection(self, connectionObject):
-        '''
+        """
         :param connectionObject: {'from': str, 'to': str, 'cost': int}
-        '''
+        """
         vertex1 = connectionObject["from"]
         vertex2 = connectionObject["to"]
         cost = connectionObject["cost"]

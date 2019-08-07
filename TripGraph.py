@@ -9,16 +9,16 @@ class TripGraph(CitiesGraph):
     def __init__(self, cities, connections, maxDays):
         assert 2 <= maxDays <= 7, "Trip has to be between 2 and 7 days long"
         CitiesGraph.__init__(self, cities, connections)
+        self.startingCity = list(filter(lambda city: self.nodes[city].isBase, self.nodes))[0]
         self.maxDays = maxDays
-        self.daysToStartingCity = defaultdict(int)
-
-        for city in self.nodes:
-            if self.nodes[city].isBase:
-                self.startingCity = city
-
+        self.daysToStartingCity = self.getDaysToCities()
         self.bestPath = self.getBestPath()
 
     def getDaysToCities(self):
+        """
+        Return a dictionary with cities as keys and minimum days to go back to the starting city as values using BFS.
+        :return : dict(int)
+        """
         visited = []
         distances = defaultdict(int)
 
@@ -41,9 +41,16 @@ class TripGraph(CitiesGraph):
                 q.put(nextCityName)
                 visited.append(nextCityName)
 
-        self.daysToStartingCity = distances
+        return distances
 
     def getPossiblePaths(self, path, daysLeft):
+        """
+        In each recursive call, returns a list of lists with the possible paths developing over time. In the end,
+        returns a list of lists of correct paths (that is, ends in startingCity and in less than the initial days.
+        :param path: list<str>
+        :param daysLeft: int
+        :return: list<list<str>>
+        """
         currentCity = self.startingCity
         shorterPath = []
 
@@ -67,7 +74,12 @@ class TripGraph(CitiesGraph):
         else:
             return []
 
-    def calculatePathWeight(self, path):
+    def calculatePathReward(self, path):
+        """
+        Given a path, gets the actual reward considering the reward and the cost of the trip
+        :param path: list<str>
+        :return: int
+        """
         visited = []
         netReward = 0
         currentCity = self.startingCity
@@ -82,7 +94,11 @@ class TripGraph(CitiesGraph):
         return netReward
 
     def getBestPath(self):
-        bestPath = sorted([(path, self.calculatePathWeight(path))
+        """
+        Selects the best path out of the possible paths
+        :return: (list<str>, int)
+        """
+        bestPath = sorted([(path, self.calculatePathReward(path))
                            for path in self.getPossiblePaths([], self.maxDays)],
                           key=lambda x: x[1], reverse=True)[0]
 
