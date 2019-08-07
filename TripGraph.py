@@ -1,39 +1,47 @@
+from CitiesGraph import CitiesGraph
 from collections import defaultdict
-from graphUtils import Node, Edge
 import functools
 import operator
 import queue
 
 
-class CitiesGraph:
-    def __init__(self, cities, connections):
-        self.nodes = defaultdict(Node)
-        self.edges = defaultdict(list)
+class TripGraph(CitiesGraph):
+    def __init__(self, cities, connections, maxDays):
+        assert 2 <= maxDays <= 7, "Trip has to be between 2 and 7 days long"
+        CitiesGraph.__init__(self, cities, connections)
+        self.maxDays = maxDays
         self.daysToStartingCity = defaultdict(int)
-
-        for city in cities:
-            self.addCity(city)
-
-        for connection in connections:
-            self.addConnection(connection)
 
         for city in self.nodes:
             if self.nodes[city].isBase:
                 self.startingCity = city
 
-        self.getDaysToCities()
+        self.bestPath = self.getBestPath()
 
-    def addCity(self, cityObject):
-        city = Node(cityObject["reward"], cityObject.get("base", False))
-        self.nodes[cityObject["name"]] = city
+    def getDaysToCities(self):
+        visited = []
+        distances = defaultdict(int)
 
-    def addConnection(self, connectionObject):
-        vertex1 = connectionObject["from"]
-        vertex2 = connectionObject["to"]
-        cost = connectionObject["cost"]
+        q = queue.Queue()
+        distances[self.startingCity] = 0
 
-        self.edges[vertex1].append(Edge(vertex2, cost))
-        self.edges[vertex2].append(Edge(vertex1, cost))
+        q.put(self.startingCity)
+        visited.append(self.startingCity)
+
+        while not q.empty():
+            currentCity = q.get()
+
+            for adjacentCity in self.edges[currentCity]:
+                nextCityName = adjacentCity.nextNode
+
+                if nextCityName in visited:
+                    continue
+
+                distances[nextCityName] = distances[currentCity] + 1
+                q.put(nextCityName)
+                visited.append(nextCityName)
+
+        self.daysToStartingCity = distances
 
     def getPossiblePaths(self, path, daysLeft):
         currentCity = self.startingCity
@@ -73,36 +81,11 @@ class CitiesGraph:
 
         return netReward
 
-    def getBestPath(self, days):
+    def getBestPath(self):
         bestPath = sorted([(path, self.calculatePathWeight(path))
-                           for path in self.getPossiblePaths([], days)],
+                           for path in self.getPossiblePaths([], self.maxDays)],
                           key=lambda x: x[1], reverse=True)[0]
 
         bestPath[0].insert(0, self.startingCity)
 
         return bestPath
-
-    def getDaysToCities(self):
-        visited = []
-        distances = defaultdict(int)
-
-        q = queue.Queue()
-        distances[self.startingCity] = 0
-
-        q.put(self.startingCity)
-        visited.append(self.startingCity)
-
-        while not q.empty():
-            currentCity = q.get()
-
-            for adjacentCity in self.edges[currentCity]:
-                nextCityName = adjacentCity.nextNode
-
-                if nextCityName in visited:
-                    continue
-
-                distances[nextCityName] = distances[currentCity] + 1
-                q.put(nextCityName)
-                visited.append(nextCityName)
-
-        self.daysToStartingCity = distances

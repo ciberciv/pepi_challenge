@@ -1,5 +1,5 @@
 import json
-from citiesGraph import CitiesGraph
+from TripGraph import TripGraph
 
 
 with open("exercise1.json") as file:
@@ -8,6 +8,6 @@ with open("exercise1.json") as file:
 cities = data["cities"]
 connections = data["connections"]
 
-pepi = CitiesGraph(cities, connections)
+pepi = TripGraph(cities, connections, 5)
 
-print(pepi.getBestPath(5))
+print(pepi.bestPath)
